@@ -1,30 +1,35 @@
 // src/components/TaskForm.jsx
 import React, { useState } from 'react';
-import { TextField, Button, Box, Paper } from '@mui/material';
+import { TextField, Button, Box, Paper, Typography, Divider } from '@mui/material';
 
-const TaskForm = ({ addTask, updateTask, existingTask }) => {
-  const [title, setTitle] = useState(existingTask ? existingTask.title : '');
-  const [description, setDescription] = useState(existingTask ? existingTask.description : '');
+const TaskForm = ({ addTask }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (existingTask) {
-      updateTask({ ...existingTask, title, description });
-    } else {
-      addTask({ title, description });
-    }
+    addTask({ title, description }, file);
     setTitle('');
     setDescription('');
+    setFile(null);
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+    <Paper elevation={4} sx={{ p: 3, borderRadius: 2 }}>
+      <Typography variant="h5" component="h2" gutterBottom>
+        Add a New Task
+      </Typography>
+      <Divider sx={{ mb: 2 }} />
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
         <TextField
-          label="Title"
+          label="Task Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           fullWidth
+          required
           margin="normal"
         />
         <TextField
@@ -32,12 +37,28 @@ const TaskForm = ({ addTask, updateTask, existingTask }) => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           fullWidth
+          required
           margin="normal"
           multiline
           rows={4}
         />
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-          {existingTask ? 'Update Task' : 'Add Task'}
+        <Divider sx={{ my: 2 }}>OR</Divider>
+        <Typography variant="body1" gutterBottom>
+          Upload a File (Optional)
+        </Typography>
+        <input
+          type="file"
+          accept=".pdf,.docx,.xlsx"
+          onChange={handleFileChange}
+          style={{ marginBottom: 16 }}
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2, borderRadius: 2, textTransform: 'none' }}
+        >
+          Add Task
         </Button>
       </Box>
     </Paper>
